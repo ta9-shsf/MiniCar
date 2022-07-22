@@ -14,7 +14,7 @@ def control_callback():
     RRdis = togikai_ultrasonic.Mesure(36,38)
 
     #加速、旋回の制御
-    if Fdis >= 100 and RLdis <= 100 and RRdis <= 100:
+    if Fdis >= 150 and RLdis <= 100 and RRdis <= 100:
       togikai_drive.Accel(FORWARD_S)
       togikai_drive.Steer(0)
       mode = "go"
@@ -39,6 +39,14 @@ def control_callback():
             togikai_drive.Accel(FORWARD_S)
             togikai_drive.Steer(0)
             mode = "直進中B"
+    elif RLdis >= 100:
+        togikai_drive.Accel(FORWARD_C)
+        togikai_drive.Steer(LEFT2) 
+        mode = "左旋回C"
+    elif RRdis >= 100:
+        togikai_drive.Accel(FORWARD_C)
+        togikai_drive.Steer(RIGHT2) 
+        mode = "右旋回C"
     else:
         togikai_drive.Accel(FORWARD_S)
         togikai_drive.Steer(0)
