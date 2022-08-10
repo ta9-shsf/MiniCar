@@ -1,3 +1,22 @@
+#パラメータ設定
+
+#前壁との最小距離
+Cshort=70
+
+#右左折判定基準
+SHORT_DIST = 90
+CC_DIST = 150
+
+#モーター出力
+FORWARD_S = 100 #<=100
+FORWARD_C = 50 #<=100
+FORWARD_CC = 35
+REVERSE = -60
+
+#ステア
+LEFT = 100 #<=100
+RIGHT = -100 #<=100
+
 def control_callback():
     #変更したいグローバル変数がある場合は下記のように記述
     #global name_of_variable
@@ -14,39 +33,22 @@ def control_callback():
     RRdis = togikai_ultrasonic.Mesure(36,38)
 
     #加速、旋回の制御
-    if Fdis >= 150 and RLdis <= 100 and RRdis <= 100:
-      togikai_drive.Accel(FORWARD_S)
-      togikai_drive.Steer(0)
-      mode = "go"
-    elif FLdis <= SHORT_DIST and FRdis >= SHORT_DIST:
+    if RRdis > CC_DIST:
+        togikai_drive.Accel(FORWARD_CC)
+        togikai_drive.Steer(RIGHT)
+        mode = "RIGHT_A"
+    elif RLdis > CC_DIST:
+        togikai_drive.Accel(FORWARD_CC)
+        togikai_drive.Steer(LEFT)
+        mode = "LEFT_A"
+    elif FRdis > SHORT_DIST:
         togikai_drive.Accel(FORWARD_C)
         togikai_drive.Steer(RIGHT)
-        mode = "右旋回A"
-    elif FLdis > SHORT_DIST and FRdis < SHORT_DIST:
+        mode = "RIGHT_B"
+    elif FLdis > SHORT_DIST:
         togikai_drive.Accel(FORWARD_C)
-        togikai_drive.Steer(LEFT) 
-        mode = "左旋回A"
-    elif FLdis > SHORT_DIST and FRdis > SHORT_DIST:
-        if (FLdis - FRdis) > 10:
-            togikai_drive.Accel(FORWARD_C)
-            togikai_drive.Steer(LEFT) 
-            mode = "左旋回B"
-        elif (FRdis - FLdis) > 10:
-            togikai_drive.Accel(FORWARD_C)
-            togikai_drive.Steer(RIGHT) 
-            mode = "右旋回B"
-        else:
-            togikai_drive.Accel(FORWARD_S)
-            togikai_drive.Steer(0)
-            mode = "直進中B"
-    elif RLdis >= 100:
-        togikai_drive.Accel(FORWARD_C)
-        togikai_drive.Steer(LEFT2) 
-        mode = "左旋回C"
-    elif RRdis >= 100:
-        togikai_drive.Accel(FORWARD_C)
-        togikai_drive.Steer(RIGHT2) 
-        mode = "右旋回C"
+        togikai_drive.Steer(LEFT)
+        mode = "LEFT_B"
     else:
         togikai_drive.Accel(FORWARD_S)
         togikai_drive.Steer(0)
@@ -54,3 +56,4 @@ def control_callback():
 
     #表示
     print('時刻:{0:7.3f} 正面:{1:6.1f} , 右前:{2:6.1f} , 左前:{3:6.1f}, 右後:{4:6.1f} , 左後:{5:6.1f}, モード：{6}'.format( sim.getTime(),Fdis,FRdis,FLdis,RRdis,RLdis,mode))
+
